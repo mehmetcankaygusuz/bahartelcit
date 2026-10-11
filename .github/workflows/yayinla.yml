@@ -1,0 +1,49 @@
+# Siteyi sunucuya yükler. Gerekli GitHub Secrets: SSH_HOST, SSH_USER, SSH_PASSWORD (veya SSH_KEY), isteğe bağlı SSH_PORT
+name: Siteyi yayınla
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+concurrency: yayinla
+jobs:
+  yayinla:
+    runs-on: ubuntu-latest
+    env:
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+      SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+      SSH_KEY: ${{ secrets.SSH_KEY }}
+      SSH_PORT: ${{ secrets.SSH_PORT }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Sunucu bilgileri girildi mi?
+        id: kontrol
+        run: |
+          if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || { [ -z "$SSH_PASSWORD" ] && [ -z "$SSH_KEY" ]; }; then
+            echo "::warning::SSH_HOST, SSH_USER ve SSH_PASSWORD (veya SSH_KEY) secret'ları girilmemiş, yayın atlandı."
+            echo "hazir=0" >> "$GITHUB_OUTPUT"
+          else
+            echo "hazir=1" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Bağlantıyı hazırla
+        if: steps.kontrol.outputs.hazir == '1'
+        run: |
+          sudo apt-get install -y -qq sshpass rsync >/dev/null
+          mkdir -p ~/.ssh
+          OPTS="-p ${SSH_PORT:-22} -o StrictHostKeyChecking=accept-new"
+          if [ -n "$SSH_KEY" ]; then
+            printf '%s\n' "$SSH_KEY" > ~/.ssh/id_key && chmod 600 ~/.ssh/id_key
+            echo "SSH_CMD=ssh $OPTS -i $HOME/.ssh/id_key" >> "$GITHUB_ENV"
+          else
+            echo "SSH_CMD=sshpass -e ssh $OPTS" >> "$GITHUB_ENV"
+          fi
+      - name: Sunucu ayarı (Nginx/Apache + SSL)
+        if: steps.kontrol.outputs.hazir == '1'
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+        run: $SSH_CMD "$SSH_USER@$SSH_HOST" 'bash -s' < sunucu/kurulum.sh
+      - name: Dosyaları yükle
+        if: steps.kontrol.outputs.hazir == '1'
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+        run: rsync -rz --delete --chmod=D755,F644 -e "$SSH_CMD" site/ "$SSH_USER@$SSH_HOST:/var/www/bahartelcit.com/"
