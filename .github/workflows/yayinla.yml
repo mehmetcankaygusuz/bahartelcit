@@ -67,3 +67,11 @@ jobs:
           if [ -z "$IP" ]; then echo "::warning::bahartelcit.com DNS kaydı yok. A kaydını sunucu IP'sine yönlendirin."
           elif [ "$IP" = "$SSH_HOST" ]; then echo "::notice::bahartelcit.com DNS kaydı sunucuyu gösteriyor."
           else echo "::warning::bahartelcit.com başka bir IP'yi gösteriyor ($IP). A kaydını sunucu IP'sine yönlendirin."; fi
+      - name: Site açılıyor mu?
+        if: steps.kontrol.outputs.hazir == '1'
+        run: |
+          H=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://bahartelcit.com/ || true)
+          W=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://www.bahartelcit.com/ || true)
+          P=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://bahartelcit.com/ || true)
+          T=$(curl -s --max-time 20 https://bahartelcit.com/ | grep -o '<title>[^<]*' | head -1 || true)
+          echo "::notice::https://bahartelcit.com -> $H, https://www -> $W, http -> $P, başlık: ${T#<title>}"
