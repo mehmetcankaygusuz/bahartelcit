@@ -21,16 +21,12 @@
 
 Bunları gönderdiğinizde siteyi tek komutla güncelliyorum (`kaynak/config.json`).
 
-## 3. Siteyi yayına alma (bahartelcit.com)
+## 3. Yayın (kuruldu)
 
-En kolay ve ücretsiz seçenek **Cloudflare Pages**:
-1. cloudflare.com'da ücretsiz hesap açın. Workers & Pages bölümünden Create, ardından Pages ve "Upload assets" adımlarını izleyin. `site` klasörünü sürükleyip bırakın.
-2. Custom domains bölümüne `bahartelcit.com` yazın. Alan adınızı aldığınız firmada (GoDaddy, İsimtescil, Natro vb.) DNS ayarını Cloudflare'in gösterdiği şekilde değiştirin.
-3. SSL (https) otomatik gelir.
-
-**GitHub'dan otomatik yayın (önerilen):** Cloudflare Pages'te "Connect to Git" seçeneğiyle `mehmetcankaygusuz/bahartelcit` reposunu bağlayın. Build command alanını boş bırakın, Build output directory alanına `site` yazın. Bundan sonra repoya yapılan her değişiklik siteye kendiliğinden yansır.
-
-Alternatif: **Netlify** (aynı ayarlarla, ücretsiz).
+Site, solimena.com.tr ile aynı sunucuda ayrı bir Nginx ayarıyla yayında: https://bahartelcit.com (SSL etkin, http otomatik https'e yönleniyor).
+- Repoya (main) yapılan her değişiklik GitHub Actions ile sunucuya kendiliğinden yüklenir (`.github/workflows/yayinla.yml`).
+- Sunucu bilgileri GitHub > Settings > Secrets içinde: `SSH_HOST`, `SSH_USER`, `SSH_PASSWORD` (isteğe bağlı `SSH_PORT`).
+- Her yayının sonunda bahartelcit.com ve solimena.com.tr'nin açıldığı otomatik kontrol edilir; sonuç Actions sekmesinde görünür.
 
 ## 4. Google İşletme Profili (Google Haritalar)
 
