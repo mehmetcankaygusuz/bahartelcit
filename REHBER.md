@@ -69,7 +69,13 @@ Site hazır, sadece kodları girmek gerekiyor:
 - Fotoğraflarınız geldiğinde her ilçe sayfasına "Bu bölgede yaptığımız işler" galerisi ekleyelim.
 - Siteyi Facebook, Instagram ve sahibinden ilanlarınıza ekleyin. Gelen bağlantılar da sıralamaya yardımcı olur.
 
-## 7. Dosyalar
+## 7. Eski siteden Google'da kalan sayfalar
+
+- Eski köy × hizmet adresleri (ör. `/catalca-gokceali-panel-cit`, `/kadikoy-panel-cit`) yeni köy sayfasına, tanınmayan hizmet adresleri ilgili hizmet sayfasına kalıcı (301) yönlenir. Kurallar `sunucu/eski-adresler.conf` dosyasında, `node build.mjs` ile üretilir.
+- Search Console'da Sayfalar > "Bulunamadı (404)" listesinde kalan adresleri bana gönderin, onları da yönlendireyim.
+- Eski telefon numarasının göründüğü sonuçlar Google sayfayı yeniden taradıkça kendiliğinden düzelir. Hızlandırmak için Search Console > URL Denetimi > "Dizine eklenmeyi iste" kullanın.
+
+## 8. Dosyalar
 
 - `site/`: yayına alınacak hazır site (bu klasörü yüklemeniz yeterli)
 - `kaynak/`: site üreticisi. `config.json` işletme bilgilerini, `data.mjs` hizmetleri ve köy listesini içerir. Güncellemek için `node build.mjs` komutunu çalıştırın.
