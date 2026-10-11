@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { services, districts } from './data.mjs';
+import { services, districts, photos } from './data.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const OUT = path.resolve(ROOT, '..', 'site');
@@ -97,7 +97,7 @@ function businessSchema() {
     description: `${cfg.brand}: Silivri, Çatalca, Beylikdüzü, Büyükçekmece ve Tekirdağ’da tel çit, panel çit, çim çit, arsa çevirme, solar aydınlatma ve peyzaj.`,
     url: SITE + '/',
     logo: SITE + '/assets/logo.png',
-    image: SITE + '/assets/og.png',
+    image: [SITE + '/assets/og.png', ...photos.map((p) => `${SITE}/assets/foto/${p.file}-960.webp`)],
     telephone: cfg.phone,
     priceRange: '₺₺',
     openingHours: cfg.openingHours,
@@ -254,6 +254,18 @@ function serviceCards(linkFor, labelFor) {
 
 const pills = (items) => `<ul class="pills">${items.map(([n, u]) => `<li><a href="${u}">${esc(n)}</a></li>`).join('')}</ul>`;
 
+// ---------- fotoğraflar ----------
+function img(ph, { eager = false, sizes = '(min-width: 900px) 360px, 50vw' } = {}) {
+  const h = Math.round(480 / ph.ratio);
+  return `<img src="/assets/foto/${ph.file}-480.webp" srcset="/assets/foto/${ph.file}-480.webp 480w, /assets/foto/${ph.file}-960.webp 960w" sizes="${sizes}" width="480" height="${h}" alt="${esc(ph.caption)} – ${esc(cfg.brand)}"${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async">`;
+}
+const photosFor = (slug) => (slug ? [...photos.filter((p) => p.services.includes(slug)), ...photos.filter((p) => !p.services.includes(slug))] : photos);
+function gallery(serviceSlug, heading = 'Yaptığımız işlerden örnekler') {
+  return `<section class="wrap"><h2>${esc(heading)}</h2><div class="gallery">${photosFor(serviceSlug)
+    .map((ph) => `<figure>${img(ph)}<figcaption>${esc(ph.caption)}</figcaption></figure>`)
+    .join('')}</div><p class="muted">Sizin arsanız için de benzer bir çözüm ister misiniz? <a href="#teklif">Formu doldurun</a> ya da WhatsApp’tan fotoğraf gönderin.</p></section>`;
+}
+
 // ---------- sayfa iskeleti ----------
 const pages = [];
 function page({ url, title, desc, crumbs, schema = [], body, ctx = {}, noindex = false, priority = 0.6 }) {
@@ -347,6 +359,7 @@ page({
     lead: 'Silivri, Çatalca, Beylikdüzü, Büyükçekmece, Celaliye ve Tekirdağ’da arsanızın etrafını <b>tel çit, panel çit ve çim çit</b> ile çeviriyoruz. Bahçeniz için <b>solar aydınlatma ve peyzaj</b> da yapıyoruz. Ücretsiz keşif, WhatsApp’tan aynı gün fiyat.'
   })}
 <section class="wrap"><h2>Hizmetlerimiz</h2>${serviceCards(svcUrl, (s) => s.name)}</section>
+${gallery('')}
 <section class="band"><div class="wrap two">
   <div><h2>Neden Bahar Tel Çit?</h2>${why}</div>
   <div><h2>Hizmet bölgelerimiz</h2><p>Silivri merkezli ekibimiz İstanbul’un batısında ve Tekirdağ’da her gün sahada. Köyünüzü veya mahallenizi seçin:</p>${pills(districts.map((d) => [d.name + ' Tel Çit', d.hub]))}
@@ -372,6 +385,7 @@ for (const s of services) {
   <div><h2>${esc(s.name)} hizmetimiz neleri kapsar?</h2><ul class="ticks">${s.details.map((x) => `<li>${icon('check')}${esc(x)}</li>`).join('')}</ul></div>
   <div><h2>Neden bizi seçmelisiniz?</h2>${why}</div>
 </section>
+${gallery(s.slug, photos.some((p) => p.services.includes(s.slug)) ? `${s.name} uygulamalarımız` : 'Yaptığımız işlerden örnekler')}
 <section class="band"><div class="wrap"><h2>${esc(s.name)} hizmet bölgeleri</h2>
   <p>${esc(s.name)} hizmetini aşağıdaki ilçelerde ve bu ilçelerin tüm köy ve mahallelerinde veriyoruz:</p>
   ${pills(districts.map((d) => [`${d.name} ${lower(s.name)}`, dsUrl(d, s)]))}
@@ -420,6 +434,7 @@ ${isHub ? `<section class="wrap"><h2>${esc(d.locText)} verdiğimiz hizmetler</h2
   <p>${esc(d.locText)} şu köy ve mahallelerde ${esc(lower(s.name))} işi yapıyoruz. Bölgenizi seçin:</p>
   ${pills(d.places.map((p) => [`${p.name} ${lower(s.name)}`, p.url]))}
 </div></section>
+${gallery(isHub ? '' : s.slug)}
 ${isHub ? `<section class="wrap two"><div><h2>Neden Bahar Tel Çit?</h2>${why}</div><div><h2>Diğer bölgeler</h2>${pills(districts.filter((x) => x !== d).map((x) => [x.name + ' Tel Çit', x.hub]))}</div></section>` : `<section class="wrap"><h2>${esc(d.locText)} diğer hizmetlerimiz</h2>${pills(services.filter((x) => x !== s).map((x) => [`${d.name} ${x.name}`, dsUrl(d, x)]))}</section>`}
 ${steps}
 ${faqBlock(faq)}`,
@@ -453,6 +468,7 @@ for (const p of places) {
     ctx: { place: p.full },
     body: `${hero({ h1: `${p.full} Tel Çit ve Arsa Çevirme`, lead: esc(intro), place: p.full, service: 'Tel Çit' })}
 <section class="wrap"><h2>${esc(p.locText)} yaptığımız işler</h2>${serviceCards((x) => dsUrl(d, x), (x) => `${p.name} ${lower(x.name)}`)}</section>
+${gallery('tel-cit')}
 <section class="band"><div class="wrap two">
   <div><h2>${esc(p.full)} için neden Bahar Tel Çit?</h2>${why}</div>
   <div><h2>${esc(d.name)} bölgesinde çalışıyoruz</h2><p>${esc(d.note)}</p><p>${icon('pin')} ${esc(p.full)} ve yakınındaki şu bölgelerde de hizmet veriyoruz:</p>${pills(near.map((x) => [x.full, x.url]))}<p><a href="${d.hub}">${esc(d.name)} tel çit sayfasına dön</a></p></div>
@@ -521,7 +537,7 @@ ${pages
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), sitemap);
 fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
 fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true });
-for (const f of fs.readdirSync(path.join(ROOT, 'assets'))) fs.copyFileSync(path.join(ROOT, 'assets', f), path.join(OUT, 'assets', f));
+fs.cpSync(path.join(ROOT, 'assets'), path.join(OUT, 'assets'), { recursive: true });
 fs.writeFileSync(
   path.join(OUT, 'favicon.svg'),
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#1f6b3a"/><g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" transform="translate(2.4 2.4) scale(.8)">${ICONS.fence}</g></svg>`

@@ -105,3 +105,10 @@ form .btn{width:100%;margin-top:4px}
   .sticky .btn-call{display:none}
   .sticky .btn-wa{border-radius:999px;padding:16px 22px;box-shadow:0 8px 24px rgba(31,170,83,.4)}
 }
+
+/* iş fotoğrafları */
+.gallery{display:grid;gap:12px;grid-template-columns:repeat(2,1fr)}
+@media(min-width:800px){.gallery{grid-template-columns:repeat(5,1fr)}}
+.gallery figure{margin:0;background:#fff;border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.gallery img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:cover}
+.gallery figcaption{padding:8px 10px;font-size:14px;color:var(--mut);line-height:1.35}

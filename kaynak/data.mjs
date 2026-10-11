@@ -243,3 +243,12 @@ export const districts = [
     villageLoc: { 'Marmaraereğlisi': 'Marmaraereğlisi’nde' }
   }
 ];
+
+// İş fotoğrafları (assets/foto/<file>-480.webp ve -960.webp). ratio = genişlik / yükseklik
+export const photos = [
+  { file: 'orgu-tel-cit-beton-direk', ratio: 585 / 545, caption: 'Beton direkli örgü tel çit ve dikenli tel', services: ['tel-cit', 'arsa-cevirme'] },
+  { file: 'panel-cit-kapi-montaji', ratio: 1, caption: 'Panel çit, kapı montajı ve jiletli tel', services: ['panel-cit', 'bahce-kapisi', 'dikenli-tel', 'arsa-cevirme'] },
+  { file: 'panel-cit-duvar-ustu', ratio: 720 / 687, caption: 'Duvar üstü yeşil panel çit', services: ['panel-cit'] },
+  { file: 'jiletli-tel-konsertina', ratio: 1000 / 601, caption: 'İş yeri çevresine jiletli tel (konsertina)', services: ['dikenli-tel'] },
+  { file: 'dikenli-tel-orgu-tel', ratio: 800 / 532, caption: 'Örgü tel çit üstüne dikenli tel', services: ['dikenli-tel', 'tel-cit'] }
+];
