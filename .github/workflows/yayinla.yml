@@ -47,7 +47,7 @@ jobs:
           if [ "$SSH_USER" = "root" ]; then KOMUT="bash /tmp/bahartelcit-kurulum.sh"; else KOMUT="sudo -S -p '' bash /tmp/bahartelcit-kurulum.sh $SSH_USER"; fi
           printf '%s\n' "$SSH_PASSWORD" | $SSH_CMD "$SSH_USER@$SSH_HOST" "$KOMUT" > cikti.txt 2>&1; rc=$?
           cat cikti.txt
-          tail -n 12 cikti.txt | while IFS= read -r l; do echo "::notice::$l"; done
+          grep -iE 'SSL|certbot|HATA|UYARI|error|Nginx|Apache|Congratulations|Successfully' cikti.txt | tail -n 9 | while IFS= read -r l; do echo "::notice::$l"; done
           exit $rc
       - name: Dosyaları yükle
         if: steps.kontrol.outputs.hazir == '1'
@@ -73,5 +73,5 @@ jobs:
           H=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://bahartelcit.com/ || true)
           W=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://www.bahartelcit.com/ || true)
           P=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://bahartelcit.com/ || true)
-          T=$(curl -s --max-time 20 https://bahartelcit.com/ | grep -o '<title>[^<]*' | head -1 || true)
+          T=$(curl -s --max-time 20 http://bahartelcit.com/ | grep -o '<title>[^<]*' | head -1 || true)
           echo "::notice::https://bahartelcit.com -> $H, https://www -> $W, http -> $P, başlık: ${T#<title>}"

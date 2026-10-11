@@ -61,6 +61,11 @@ else
 fi
 
 # SSL: alan adı bu sunucuyu gösteriyorsa ve sertifika yoksa Let's Encrypt kur
+echo "SSL kontrolü başlıyor."
+if [ -d /etc/letsencrypt/live/$DOMAIN ]; then
+  echo "SSL sertifikası zaten var: $(ls /etc/letsencrypt/live/$DOMAIN | tr '\n' ' ')"
+  grep -q "ssl_certificate" /etc/nginx/sites-available/$DOMAIN 2>/dev/null && echo "Nginx SSL ayarı var." || echo "Nginx ayarında SSL yok."
+fi
 if [ ! -d /etc/letsencrypt/live/$DOMAIN ]; then
   SERVER_IP=$(curl -s4 --max-time 10 https://api.ipify.org || true)
   DNS_IP=$(getent ahostsv4 $DOMAIN | awk 'NR==1{print $1}' || true)
@@ -68,7 +73,7 @@ if [ ! -d /etc/letsencrypt/live/$DOMAIN ]; then
     command -v certbot >/dev/null || { apt-get update -qq && apt-get install -y -qq certbot python3-certbot-$WEB; }
     DOMS="-d $DOMAIN"
     [ "$(getent ahostsv4 www.$DOMAIN | awk 'NR==1{print $1}')" = "$SERVER_IP" ] && DOMS="$DOMS -d www.$DOMAIN"
-    certbot --$WEB $DOMS --non-interactive --agree-tos --register-unsafely-without-email --redirect
+    certbot --$WEB $DOMS --non-interactive --agree-tos --register-unsafely-without-email --redirect 2>&1 | tail -n 5
     echo "SSL kuruldu."
   else
     echo "UYARI: $DOMAIN henüz bu sunucuyu göstermiyor (DNS: ${DNS_IP:-yok}, sunucu: ${SERVER_IP:-?}). DNS ayarlanınca SSL bir sonraki yayında kurulacak."
