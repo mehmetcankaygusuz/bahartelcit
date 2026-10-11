@@ -60,6 +60,27 @@ else
   echo "HATA: Çalışan Nginx veya Apache bulunamadı."; exit 1
 fi
 
+# Eski siteden kalan adresleri yeni sayfalara kalıcı (301) yönlendir
+if [ "$WEB" = nginx ]; then
+  cat > /etc/nginx/snippets/$DOMAIN-yonlendirme.conf <<'YON'
+location = /hizmetler { return 301 /hizmetler/; }
+location ~* ^/hizmetler/(tel-cit|tel-cit-uygulama)/?$ { return 301 /tel-cit/; }
+location ~* ^/(hakkimizda|hakkimizda\.html|kurumsal|about)/?$ { return 301 /; }
+location ~* ^/(iletisim\.html|iletisim\.php|contact)/?$ { return 301 /iletisim/; }
+location ~* ^/(hizmetler\.html|hizmetlerimiz)/?$ { return 301 /hizmetler/; }
+location ~* ^/(galeri|referanslar|projeler|projelerimiz)/?$ { return 301 /hizmetler/; }
+location ~* ^/(index\.php|index\.html|anasayfa)$ { return 301 /; }
+location ~* ^/(silivri|catalca|corlu|tekirdag|beylikduzu|buyukcekmece)/?$ { return 301 /$1-tel-cit/; }
+location ~* ^/marmara-?ereglisi(-tel-cit)?/?$ { return 301 /marmaraereglisi-tel-cit/; }
+YON
+  CONF_EN=/etc/nginx/sites-available/$DOMAIN
+  if ! grep -q "$DOMAIN-yonlendirme.conf" "$CONF_EN"; then
+    sed -i "s|^\(\s*root $ROOT;\)|\1\n    include /etc/nginx/snippets/$DOMAIN-yonlendirme.conf;|" "$CONF_EN"
+  fi
+  if nginx -t >/dev/null 2>&1; then systemctl reload nginx && echo "Nginx yönlendirmeleri güncel."
+  else sed -i "/$DOMAIN-yonlendirme.conf/d" "$CONF_EN"; echo "HATA: yönlendirme ayarı geçersiz, geri alındı."; fi
+fi
+
 # SSL: alan adı bu sunucuyu gösteriyorsa ve sertifika yoksa Let's Encrypt kur
 echo "SSL kontrolü başlıyor."
 if [ -d /etc/letsencrypt/live/$DOMAIN ]; then

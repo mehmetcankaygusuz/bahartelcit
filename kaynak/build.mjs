@@ -534,6 +534,18 @@ ${districts
 });
 
 page({
+  url: '/hizmetler/',
+  title: 'Hizmetlerimiz | Tel Çit, Panel Çit, Çim Çit, Solar ve Peyzaj',
+  desc: 'Bahar Tel Çit hizmetleri: tel çit, panel çit, çim çit, arsa çevirme, dikenli ve jiletli tel, bahçe kapısı, solar bahçe aydınlatma ve peyzaj. Ücretsiz keşif, WhatsApp’tan fiyat.',
+  crumbs: [['Ana Sayfa', '/'], ['Hizmetler', '/hizmetler/']],
+  priority: 0.8,
+  body: `<section class="wrap page-head"><h1>Hizmetlerimiz</h1><p class="lead">Silivri, Çatalca, Beylikdüzü, Büyükçekmece, Celaliye ve Tekirdağ’da arsa, bahçe ve iş yerleri için çit, güvenlik, aydınlatma ve peyzaj işlerini anahtar teslim yapıyoruz.</p>${cta('', '')}</section>
+<section class="wrap">${serviceCards(svcUrl, (s) => s.name)}</section>
+${gallery('')}
+${steps}`
+});
+
+page({
   url: '/iletisim/',
   title: 'İletişim ve Fiyat Teklifi – Bahar Tel Çit',
   desc: 'Tel çit, panel çit, çim çit ve arsa çevirme için WhatsApp’tan yazın veya arayın. Ücretsiz keşif, aynı gün fiyat.',
