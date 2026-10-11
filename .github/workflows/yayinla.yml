@@ -15,13 +15,20 @@ jobs:
       SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
       SSH_KEY: ${{ secrets.SSH_KEY }}
       SSH_PORT: ${{ secrets.SSH_PORT }}
+      SSH_TEK: ${{ secrets.SSH }}
     steps:
       - uses: actions/checkout@v4
       - name: Sunucu bilgileri girildi mi?
         id: kontrol
         run: |
           if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || { [ -z "$SSH_PASSWORD" ] && [ -z "$SSH_KEY" ]; }; then
-            echo "Bulunan secret'lar: HOST=${SSH_HOST:+var} USER=${SSH_USER:+var} PASSWORD=${SSH_PASSWORD:+var} KEY=${SSH_KEY:+var}"
+            echo "::warning::Bulunan: HOST=${SSH_HOST:+var} USER=${SSH_USER:+var} PASSWORD=${SSH_PASSWORD:+var} KEY=${SSH_KEY:+var} SSH=${SSH_TEK:+var}"
+            if [ -n "$SSH_TEK" ]; then
+              SATIR=$(printf '%s\n' "$SSH_TEK" | grep -c .)
+              KELIME=$(printf '%s\n' "$SSH_TEK" | awk 'NF{printf "%s ", NF}')
+              ESIT=$(printf '%s' "$SSH_TEK" | grep -c '=' || true); IKI=$(printf '%s' "$SSH_TEK" | grep -c ':' || true); AT=$(printf '%s' "$SSH_TEK" | grep -c '@' || true)
+              echo "::warning::SSH secret bicimi: satir=$SATIR, satirdaki kelime=$KELIME, '=' satir=$ESIT, ':' satir=$IKI, '@' satir=$AT"
+            fi
             echo "::warning::SSH_HOST, SSH_USER ve SSH_PASSWORD (veya SSH_KEY) secret'ları girilmemiş, yayın atlandı."
             echo "hazir=0" >> "$GITHUB_OUTPUT"
           else
