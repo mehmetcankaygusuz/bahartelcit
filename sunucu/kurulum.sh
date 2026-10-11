@@ -69,7 +69,7 @@ location ~* ^/(hakkimizda|hakkimizda\.html|kurumsal|about)/?$ { return 301 /; }
 location ~* ^/(iletisim\.html|iletisim\.php|contact)/?$ { return 301 /iletisim/; }
 location ~* ^/(hizmetler\.html|hizmetlerimiz)/?$ { return 301 /hizmetler/; }
 location ~* ^/(galeri|referanslar|projeler|projelerimiz)/?$ { return 301 /hizmetler/; }
-location ~* ^/(index\.php|index\.html|anasayfa)$ { return 301 /; }
+location ~* ^/(index\.php|anasayfa)/?$ { return 301 /; }
 location ~* ^/(silivri|catalca|corlu|tekirdag|beylikduzu|buyukcekmece)/?$ { return 301 /$1-tel-cit/; }
 location ~* ^/marmara-?ereglisi(-tel-cit)?/?$ { return 301 /marmaraereglisi-tel-cit/; }
 YON
