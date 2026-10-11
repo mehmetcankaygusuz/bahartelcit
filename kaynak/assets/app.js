@@ -6,8 +6,8 @@
     try {
       if (typeof window.gtag !== 'function') return;
       window.gtag('event', kind === 'call' ? 'telefon_tiklama' : kind === 'form' ? 'form_gonderimi' : 'whatsapp_tiklama', { sayfa: C.page || location.pathname });
-      var label = C.labels && C.labels[kind];
-      if (C.ads && label) window.gtag('event', 'conversion', { send_to: C.ads + '/' + label });
+      var list = (C.conv && C.conv[kind]) || [];
+      for (var i = 0; i < list.length; i++) window.gtag('event', 'conversion', { send_to: list[i] });
     } catch (e) {}
   }
 

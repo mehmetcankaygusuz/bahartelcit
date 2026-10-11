@@ -158,9 +158,16 @@ const crumbSchema = (crumbs) => ({
   itemListElement: crumbs.map(([name, url], i) => ({ '@type': 'ListItem', position: i + 1, name, item: SITE + url }))
 });
 
+// Her olay (whatsapp/call/form) için gönderilecek Google Ads dönüşümleri: ana hesap + ek hesaplar
+const adsConversions = {};
+for (const a of [{ id: cfg.googleAdsId, labels: cfg.googleAdsLabels }, ...(cfg.googleAdsExtra || [])]) {
+  if (!a.id) continue;
+  for (const [kind, label] of Object.entries(a.labels || {})) if (label) (adsConversions[kind] ||= []).push(`${a.id}/${label}`);
+}
+
 // ---------- ortak parçalar ----------
 function trackingHead() {
-  const ids = [cfg.googleAdsId, cfg.ga4Id].filter(Boolean);
+  const ids = [cfg.googleAdsId, ...(cfg.googleAdsExtra || []).map((a) => a.id), cfg.ga4Id].filter(Boolean);
   if (!ids.length) return '';
   return `<script async src="https://www.googletagmanager.com/gtag/js?id=${ids[0]}"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());${ids.map((i) => `gtag('config','${i}');`).join('')}</script>`;
@@ -340,7 +347,7 @@ ${trackingHead()}
 ${[businessSchema(), ...(url === '/' ? [websiteSchema()] : []), ...schema, ...(crumbs ? [crumbSchema(crumbs)] : [])]
   .map((s) => `<script type="application/ld+json">${JSON.stringify(s)}</script>`)
   .join('\n')}
-<script>window.BTC=${JSON.stringify({ wa: cfg.whatsapp, ads: cfg.googleAdsId, labels: cfg.googleAdsLabels, page: ctx.place || '' })}</script>
+<script>window.BTC=${JSON.stringify({ wa: cfg.whatsapp, conv: adsConversions, page: ctx.place || '' })}</script>
 </head>
 <body>
 ${header()}
