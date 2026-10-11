@@ -64,7 +64,16 @@ fi
 echo "SSL kontrolü başlıyor."
 if [ -d /etc/letsencrypt/live/$DOMAIN ]; then
   echo "SSL sertifikası zaten var: $(ls /etc/letsencrypt/live/$DOMAIN | tr '\n' ' ')"
-  grep -q "ssl_certificate" /etc/nginx/sites-available/$DOMAIN 2>/dev/null && echo "Nginx SSL ayarı var." || echo "Nginx ayarında SSL yok."
+  if [ "$WEB" = nginx ] && ! grep -q "ssl_certificate" /etc/nginx/sites-available/$DOMAIN; then
+    echo "Nginx ayarında SSL yok, sertifika bağlanıyor."
+    certbot install --nginx --cert-name $DOMAIN --redirect --non-interactive 2>&1 | tail -n 4
+    nginx -t 2>&1 | tail -n 1 && systemctl reload nginx && echo "SSL Nginx'e bağlandı."
+  elif [ "$WEB" = apache ] && ! grep -q "SSLCertificateFile" /etc/apache2/sites-enabled/$DOMAIN*.conf 2>/dev/null; then
+    echo "Apache ayarında SSL yok, sertifika bağlanıyor."
+    certbot install --apache --cert-name $DOMAIN --redirect --non-interactive 2>&1 | tail -n 4
+  else
+    echo "SSL etkin."
+  fi
 fi
 if [ ! -d /etc/letsencrypt/live/$DOMAIN ]; then
   SERVER_IP=$(curl -s4 --max-time 10 https://api.ipify.org || true)
