@@ -73,6 +73,8 @@ location ~* ^/(index\.php|anasayfa)/?$ { return 301 /; }
 location ~* ^/(silivri|catalca|corlu|tekirdag|beylikduzu|buyukcekmece)/?$ { return 301 /$1-tel-cit/; }
 location ~* ^/marmara-?ereglisi(-tel-cit)?/?$ { return 301 /marmaraereglisi-tel-cit/; }
 YON
+  # Eski köy × hizmet adresleri (kaynak/build.mjs üretir, yayın betiği /tmp'ye yükler)
+  [ -f /tmp/bahartelcit-eski.conf ] && cat /tmp/bahartelcit-eski.conf >> /etc/nginx/snippets/$DOMAIN-yonlendirme.conf
   CONF_EN=/etc/nginx/sites-available/$DOMAIN
   if ! grep -q "$DOMAIN-yonlendirme.conf" "$CONF_EN"; then
     sed -i "s|^\(\s*root $ROOT;\)|\1\n    include /etc/nginx/snippets/$DOMAIN-yonlendirme.conf;|" "$CONF_EN"

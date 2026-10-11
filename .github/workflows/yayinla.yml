@@ -44,6 +44,7 @@ jobs:
         run: |
           set +e
           $SSH_CMD "$SSH_USER@$SSH_HOST" 'cat > /tmp/bahartelcit-kurulum.sh' < sunucu/kurulum.sh
+          $SSH_CMD "$SSH_USER@$SSH_HOST" 'cat > /tmp/bahartelcit-eski.conf' < sunucu/eski-adresler.conf
           if [ "$SSH_USER" = "root" ]; then KOMUT="bash /tmp/bahartelcit-kurulum.sh"; else KOMUT="sudo -S -p '' bash /tmp/bahartelcit-kurulum.sh $SSH_USER"; fi
           printf '%s\n' "$SSH_PASSWORD" | $SSH_CMD "$SSH_USER@$SSH_HOST" "$KOMUT" > cikti.txt 2>&1; rc=$?
           cat cikti.txt
@@ -78,6 +79,9 @@ jobs:
           T=$(curl -s --max-time 20 https://bahartelcit.com/ | grep -o '<title>[^<]*' | head -1 || true)
           S=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 20 https://solimena.com.tr/ || true)
           echo "::notice::Aynı sunucudaki solimena.com.tr -> $S"
+          for u in /catalca-gokceali-panel-cit /kadikoy-panel-cit /hizmetler/silivri-ortakoy-cim-cit /eski-sayfa-panel-cit /silivri-ortakoy-tel-cit/ /silivri-panel-cit/ /tel-cit/; do
+            echo "::notice::Adres $u -> $(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 20 https://bahartelcit.com$u || true)"
+          done
           [ "$H" = "000" ] && echo "::warning::https hatası: $(curl -sS -o /dev/null --max-time 20 https://bahartelcit.com/ 2>&1 | head -c 200)"
           echo "::notice::https://bahartelcit.com -> $H, https://www -> $W, http -> $P, başlık: ${T#<title>}"
       - name: Arama motorlarına bildir (IndexNow)

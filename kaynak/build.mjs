@@ -679,4 +679,25 @@ fs.copyFileSync(path.join(ROOT, 'assets', 'marka', 'ikon-180.png'), path.join(OU
 // Netlify / Cloudflare Pages için önbellek başlıkları
 fs.writeFileSync(path.join(OUT, '_headers'), `/assets/*\n  Cache-Control: public, max-age=604800\n`);
 
+// Eski siteden Google'da kalan köy × hizmet adreslerini (ör. /catalca-gokceali-panel-cit)
+// yeni köy sayfasına, tanınmayanları hizmet sayfasına 301 ile yönlendiren Nginx kuralları.
+// Var olan sayfalar try_files ile önce sunulur, kurallar onlara dokunmaz.
+{
+  const svcAlt = services.map((s) => s.slug).join('|');
+  const pre = '(?:hizmetler/|hizmet/|bolge/|bolgeler/)?';
+  const seen = new Set();
+  const lines = ['# Bu dosya kaynak/build.mjs tarafından üretilir, elle düzenlemeyin.'];
+  for (const p of places) {
+    const vs = slugify(p.name);
+    const d = p.district.slug;
+    // Aynı adlı köy birden fazla ilçede varsa ilçesiz adres ilk ilçeye gider
+    const bare = seen.has(vs) ? '' : '?';
+    seen.add(vs);
+    lines.push(`location ~* ^/${pre}(?:${d}-)${bare}${vs}(?:-[a-z-]+)?(?:\\.html|\\.php)?/?$ { set $eski_hedef ${p.url}; try_files $uri $uri/ @eski_adres; }`);
+  }
+  lines.push(`location ~* ^/${pre}(?:[a-z0-9-]+-)?(?<eski_hz>${svcAlt})(?:\\.html|\\.php)?/?$ { set $eski_hedef /$eski_hz/; try_files $uri $uri/ @eski_adres; }`);
+  lines.push('location @eski_adres { return 301 $eski_hedef; }');
+  fs.writeFileSync(path.resolve(ROOT, '..', 'sunucu', 'eski-adresler.conf'), lines.join('\n') + '\n');
+}
+
 console.log(`${pages.length} sayfa üretildi -> ${OUT}`);
