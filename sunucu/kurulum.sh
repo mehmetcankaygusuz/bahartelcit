@@ -10,6 +10,8 @@ if [ -d /usr/local/psa ] || [ -d /usr/local/cpanel ]; then
 fi
 
 mkdir -p "$ROOT"
+# Dosyaları yükleyen SSH kullanıcısı klasöre yazabilsin
+[ -n "${1:-}" ] && chown -R "$1" "$ROOT"
 
 if systemctl is-active --quiet nginx; then
   WEB=nginx
