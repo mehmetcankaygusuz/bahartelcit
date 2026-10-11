@@ -26,7 +26,7 @@
 ## Dönüşüm (WhatsApp) kuralları
 - Her sayfada şunlar bulunur: üst menüde WhatsApp, hero'da "WhatsApp'tan Fiyat Al" ve "Hemen Ara", talep formu, mobilde altta sabit WhatsApp/Ara çubuğu.
 - WhatsApp mesajları sayfanın bölgesini ve hizmetini önceden doldurur.
-- Tıklamalar `data-ev="whatsapp|call"` ile işaretlenir. Form gönderimi `form` olayıdır. Google Ads etiketleri `config.json > googleAdsLabels` (OZDEV yönetici hesabı) ve `googleAdsExtra` (Bahar Tel Çit reklam hesabı) içindedir; her tıklama ikisine de gönderilir.
+- Tıklamalar `data-ev="whatsapp|call"` ile işaretlenir. Form gönderimi `form` olayıdır. Google Ads etiketleri `config.json > googleAdsId` + `googleAdsLabels` içindedir (hesap 104-697-9762). Ek hesap gerekirse `googleAdsExtra` listesine eklenir; her tıklama hepsine gönderilir.
 
 ## Marka ve SEO dosyaları
 - Logo: `kaynak/marka/logo.py` (işaret `mark.path`, yazı Poppins SemiBold yola çevrilmiş) -> `kaynak/assets/marka/` (logo.svg, logo-acik.svg, favicon.svg, ikon-*.png, logo.png). Favicon: `assets/favicon.ico`.

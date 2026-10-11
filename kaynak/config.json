@@ -17,23 +17,13 @@
   "openingHours": "Mo-Su 08:00-20:00",
   "openingHoursText": "Her gün 08:00 - 20:00",
   "googleMapsUrl": "",
-  "googleAdsId": "AW-18501616203",
+  "googleAdsId": "AW-18479317990",
   "googleAdsLabels": {
-    "whatsapp": "hr2YCJvUjpkdEMuEofZE",
-    "call": "oimzCLzPkJkdEMuEofZE",
-    "form": "EP89CL_PkJkdEMuEofZE"
+    "whatsapp": "24wACLnWtZkdEOaH0OtE",
+    "call": "eMwfCLzWtZkdEOaH0OtE",
+    "form": "fGOwCL_WtZkdEOaH0OtE"
   },
-  "googleAdsExtra": [
-    {
-      "id": "AW-18506945325",
-      "not": "Bahar Tel Çit reklam hesabı, 'Kişi' dönüşümü",
-      "labels": {
-        "whatsapp": "gNNjCOfKlZkdEK2m5vhE",
-        "call": "gNNjCOfKlZkdEK2m5vhE",
-        "form": "gNNjCOfKlZkdEK2m5vhE"
-      }
-    }
-  ],
+  "googleAdsExtra": [],
   "ga4Id": "",
   "searchConsoleVerification": "",
   "indexNowKey": "762c1bf735577590842ba3566cdb15b0",
