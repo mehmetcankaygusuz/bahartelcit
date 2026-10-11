@@ -36,6 +36,7 @@ function loc(word) {
 }
 
 const svc = Object.fromEntries(services.map((s) => [s.slug, s]));
+const svcSlugByName = Object.fromEntries(services.map((s) => [s.name, s.slug]));
 const waLink = (text) => `https://wa.me/${cfg.whatsapp}?text=${encodeURIComponent(text)}`;
 const telLink = `tel:${cfg.phone}`;
 
@@ -200,10 +201,10 @@ function leadForm({ place = '', service = '' } = {}) {
   <p class="lead-sub">Formu doldurun, butona basın. WhatsApp mesajınız hazır açılır, sadece <b>Gönder</b>’e basın.</p>
   <label>Adınız<input name="ad" autocomplete="name" placeholder="Örn. Ahmet Yılmaz"></label>
   <label>Arsanızın yeri (ilçe / köy)<input name="bolge" list="bolgeler" value="${esc(place)}" placeholder="Örn. Silivri Ortaköy" required></label>
-  <label>Hizmet<select name="hizmet">${services
+  <div class="frow"><label>Hizmet<select name="hizmet">${services
     .map((s) => `<option${s.name === service ? ' selected' : ''}>${esc(s.name)}</option>`)
     .join('')}<option${service ? '' : ''}>Henüz karar vermedim</option></select></label>
-  <label>Yaklaşık uzunluk (metre) <small>bilmiyorsanız boş bırakın</small><input name="metre" inputmode="numeric" placeholder="Örn. 250"></label>
+  <label>Uzunluk (metre)<input name="metre" inputmode="numeric" placeholder="Bilmiyorsanız boş"></label></div>
   <label>Not <small>isteğe bağlı</small><textarea name="not" rows="2" placeholder="Örn. 2 metre yükseklik, araç kapısı olsun"></textarea></label>
   <button class="btn btn-wa btn-lg" type="submit">${icon('wa')}<span>WhatsApp’tan Teklif İste</span></button>
   <p class="lead-or">ya da hemen arayın: <a href="${telLink}" data-ev="call">${esc(cfg.phoneDisplay)}</a></p>
@@ -325,6 +326,7 @@ function hero({ h1, lead, place, service }) {
     <p class="lead">${lead}</p>
     ${cta(place, service)}
     <ul class="badges"><li>${icon('check')} Ücretsiz keşif</li><li>${icon('check')} Aynı gün fiyat</li><li>${icon('check')} Malzeme + işçilik dahil</li></ul>
+    <div class="hero-pics">${photosFor(svcSlugByName[service] || '').slice(0, 3).map((ph) => img(ph, { sizes: '(min-width: 900px) 200px, 33vw' })).join('')}</div>
   </div>
   ${leadForm({ place, service })}
 </div></section>`;

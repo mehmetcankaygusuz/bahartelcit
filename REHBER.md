@@ -12,7 +12,7 @@
 
 ## 2. Bana göndermeniz gerekenler
 
-1. ~~WhatsApp numarası~~ alındı: 0532 430 34 23 (siteye eklendi)
+1. ~~WhatsApp numarası~~ alındı: 0546 812 51 23 (siteye eklendi)
 2. Arama için farklı bir numara kullanacaksanız **telefon numarası**
 3. **Adres** (Google Haritalar'da görünecek olan adresle birebir aynı yazılmalı)
 4. **Çalışma saatleri** (şu an "Her gün 08:00 - 20:00" yazıyor)
