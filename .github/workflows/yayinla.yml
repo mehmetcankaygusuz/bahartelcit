@@ -8,6 +8,7 @@ concurrency: yayinla
 jobs:
   yayinla:
     runs-on: ubuntu-latest
+    environment: ssh
     env:
       SSH_HOST: ${{ secrets.SSH_HOST }}
       SSH_USER: ${{ secrets.SSH_USER }}
@@ -20,6 +21,7 @@ jobs:
         id: kontrol
         run: |
           if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || { [ -z "$SSH_PASSWORD" ] && [ -z "$SSH_KEY" ]; }; then
+            echo "Bulunan secret'lar: HOST=${SSH_HOST:+var} USER=${SSH_USER:+var} PASSWORD=${SSH_PASSWORD:+var} KEY=${SSH_KEY:+var}"
             echo "::warning::SSH_HOST, SSH_USER ve SSH_PASSWORD (veya SSH_KEY) secret'ları girilmemiş, yayın atlandı."
             echo "hazir=0" >> "$GITHUB_OUTPUT"
           else
