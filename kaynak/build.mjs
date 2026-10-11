@@ -1,6 +1,7 @@
 // Bahar Tel Çit statik site üreticisi.
 // Kullanım: node build.mjs  ->  ../site klasörüne tüm sayfaları üretir.
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { services, districts, photos } from './data.mjs';
@@ -40,6 +41,10 @@ const svc = Object.fromEntries(services.map((s) => [s.slug, s]));
 const svcSlugByName = Object.fromEntries(services.map((s) => [s.name, s.slug]));
 const waLink = (text) => `https://wa.me/${cfg.whatsapp}?text=${encodeURIComponent(text)}`;
 const telLink = `tel:${cfg.phone}`;
+
+// Tarayıcı önbelleği eski CSS/JS'yi tutmasın: dosya içeriği değişince adres de değişir
+const fileHash = (f) => crypto.createHash('md5').update(fs.readFileSync(path.join(ROOT, 'assets', f))).digest('hex').slice(0, 8);
+const ASSET_V = { css: fileHash('style.css'), js: fileHash('app.js') };
 
 // ---------- bölgeleri hazırla ----------
 const places = []; // tüm köy/mahalle sayfaları
@@ -330,7 +335,7 @@ ${cfg.searchConsoleVerification ? `<meta name="google-site-verification" content
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="stylesheet" href="/assets/style.css">
+<link rel="stylesheet" href="/assets/style.css?v=${ASSET_V.css}">
 ${trackingHead()}
 ${[businessSchema(), ...(url === '/' ? [websiteSchema()] : []), ...schema, ...(crumbs ? [crumbSchema(crumbs)] : [])]
   .map((s) => `<script type="application/ld+json">${JSON.stringify(s)}</script>`)
@@ -345,7 +350,7 @@ ${body}
 </main>
 ${footer()}
 ${datalist}
-<script src="/assets/app.js" defer></script>
+<script src="/assets/app.js?v=${ASSET_V.js}" defer></script>
 </body>
 </html>
 `;
