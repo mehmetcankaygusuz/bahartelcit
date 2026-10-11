@@ -28,6 +28,12 @@
 - WhatsApp mesajları sayfanın bölgesini ve hizmetini önceden doldurur.
 - Tıklamalar `data-ev="whatsapp|call"` ile işaretlenir. Form gönderimi `form` olayıdır. Google Ads etiketleri `config.json > googleAdsLabels` içindedir.
 
+## Marka ve SEO dosyaları
+- Logo: `kaynak/marka/logo.py` (işaret `mark.path`, yazı Poppins SemiBold yola çevrilmiş) -> `kaynak/assets/marka/` (logo.svg, logo-acik.svg, favicon.svg, ikon-*.png, logo.png). Favicon: `assets/favicon.ico`.
+- OG görseli `assets/og.jpg` (1200x630) üzerinde telefon numarası yazılıdır; numara değişirse yeniden üretilmelidir.
+- Build otomatik üretir: sitemap.xml (görselli), robots.txt (arama ve yapay zekâ botlarına izin), llms.txt, llms-full.txt, site.webmanifest, IndexNow anahtar dosyası (`config.json > indexNowKey`).
+- Yayın (GitHub Actions) her seferinde IndexNow ile Bing/Yandex'e URL bildirir.
+
 ## Teslim kontrol listesi
 - [ ] `node build.mjs` hatasız çalışıyor
 - [ ] Başlıklarda kopya yok, sitemap güncel

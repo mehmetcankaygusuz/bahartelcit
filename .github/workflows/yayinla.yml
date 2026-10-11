@@ -64,9 +64,11 @@ jobs:
         if: steps.kontrol.outputs.hazir == '1'
         run: |
           IP=$(dig +short bahartelcit.com A | tail -n1)
-          if [ -z "$IP" ]; then echo "::warning::bahartelcit.com DNS kaydı yok. A kaydını sunucu IP'sine yönlendirin."
-          elif [ "$IP" = "$SSH_HOST" ]; then echo "::notice::bahartelcit.com DNS kaydı sunucuyu gösteriyor."
-          else echo "::warning::bahartelcit.com başka bir IP'yi gösteriyor ($IP). A kaydını sunucu IP'sine yönlendirin."; fi
+          CF=$(curl -sI --max-time 15 https://bahartelcit.com/ | grep -ci '^server: cloudflare' || true)
+          if [ -z "$IP" ]; then echo "::warning::bahartelcit.com DNS kaydı yok."
+          elif [ "$IP" = "$SSH_HOST" ]; then echo "::notice::bahartelcit.com DNS kaydı doğrudan sunucuyu gösteriyor."
+          elif [ "$CF" -gt 0 ]; then echo "::notice::bahartelcit.com Cloudflare üzerinden yayında."
+          else echo "::warning::bahartelcit.com beklenmeyen bir IP'yi gösteriyor ($IP)."; fi
       - name: Site açılıyor mu?
         if: steps.kontrol.outputs.hazir == '1'
         run: |
@@ -77,3 +79,12 @@ jobs:
           S=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 20 https://solimena.com.tr/ || true)
           echo "::notice::Aynı sunucudaki solimena.com.tr -> $S"
           echo "::notice::https://bahartelcit.com -> $H, https://www -> $W, http -> $P, başlık: ${T#<title>}"
+      - name: Arama motorlarına bildir (IndexNow)
+        if: steps.kontrol.outputs.hazir == '1'
+        run: |
+          KEY=$(jq -r '.indexNowKey // empty' kaynak/config.json)
+          [ -z "$KEY" ] && exit 0
+          URLS=$(grep -o '<loc>[^<]*' site/sitemap.xml | sed 's/<loc>//' | jq -R . | jq -s .)
+          BODY=$(jq -n --arg k "$KEY" --argjson u "$URLS" '{host:"bahartelcit.com",key:$k,keyLocation:("https://bahartelcit.com/"+$k+".txt"),urlList:$u}')
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' -X POST https://api.indexnow.org/indexnow -H 'Content-Type: application/json; charset=utf-8' -d "$BODY" || true)
+          echo "::notice::IndexNow (Bing, Yandex) bildirimi: HTTP $CODE"

@@ -1,0 +1,35 @@
+# Bahar Tel Çit
+
+> Silivri, Çatalca, Beylikdüzü, Büyükçekmece, Celaliye ve Tekirdağ’da tel çit, panel çit, çim çit, arsa çevirme, dikenli/jiletli tel, bahçe kapısı, solar bahçe aydınlatma ve peyzaj hizmeti veren Silivri merkezli firma. Ücretsiz keşif yapılır, fiyat WhatsApp üzerinden aynı gün verilir. Malzeme ve işçilik dahil anahtar teslim çalışılır.
+
+## İletişim
+- WhatsApp: https://wa.me/905468125123
+- Telefon: 0546 812 51 23 (+905468125123)
+- Çalışma saatleri: Her gün 08:00 - 20:00
+- Merkez: Silivri, İstanbul
+
+## Hizmetler
+- [Tel Çit](https://bahartelcit.com/tel-cit/): Galvaniz kafes tel ve beton/demir direkle arsa, tarla ve bahçe çevirme.
+- [Panel Çit](https://bahartelcit.com/panel-cit/): Elektrostatik boyalı 3D panel çit ile villa, site, fabrika ve bahçe çevirme.
+- [Çim Çit](https://bahartelcit.com/cim-cit/): Yapay çim çit ile bahçenize gizlilik, yeşil görünüm ve rüzgar kesici.
+- [Arsa Çevirme](https://bahartelcit.com/arsa-cevirme/): Arsa, tarla ve hobi bahçesi sınırlarını tel çit veya panel çitle anahtar teslim çevirme.
+- [Dikenli ve Jiletli Tel](https://bahartelcit.com/dikenli-tel/): Duvar ve çit üstüne dikenli tel, jiletli tel ve konsertina ile güvenlik.
+- [Bahçe ve Arsa Kapısı](https://bahartelcit.com/bahce-kapisi/): Yaya kapısı, çift kanatlı araç kapısı ve sürgülü bahçe kapısı imalatı ve montajı.
+- [Solar Bahçe Aydınlatma](https://bahartelcit.com/solar-aydinlatma/): Elektrik gerektirmeyen güneş enerjili bahçe, arsa ve yol aydınlatması.
+- [Peyzaj ve Bahçe Düzenleme](https://bahartelcit.com/peyzaj/): Bahçe düzenleme, rulo çim, ağaç dikimi, otomatik sulama ve arsa temizliği.
+
+## Hizmet bölgeleri
+- [Silivri Tel Çit](https://bahartelcit.com/silivri-tel-cit/): Selimpaşa, Ortaköy, Kavaklı, Gümüşyaka, Değirmenköy, Çanta, Sayalar, Seymen, Fener, Büyükçavuşlu, Akören, Alipaşa, Beyciler, Bekirli, Büyükkılıçlı, Küçükkılıçlı, Çayırdere, Çeltik, Danamandıra, Kadıköy, Kurfallı, Gazitepe, Yolçatı, Semizkumlar, Büyüksinekli, Küçüksinekli, Kınalı, Alibey
+- [Çatalca Tel Çit](https://bahartelcit.com/catalca-tel-cit/): Ferhatpaşa, Kaleiçi, Çakıl, Binkılıç, Ormanlı, Gökçeali, Karacaköy, Subaşı, Yalıköy, Kızılcaali, İnceğiz, Muratbey, Hallaçlı, Elbasan, Oklalı, Dağyenice, Akalan, Çiftlikköy, Çanakça, Nakkaş, Kestanelik, Hisarbeyli, Aydınlar, Örcünlü, Kabakça, Yaylacık, Gümüşpınar, İzzettin, Karamandere, Belgrat, Başak, Celepköy, Kalfa, Yazlık, Ovayenice
+- [Beylikdüzü Tel Çit](https://bahartelcit.com/beylikduzu-tel-cit/): Yakuplu, Kavaklı, Gürpınar, Adnan Kahveci, Barış, Büyükşehir, Cumhuriyet, Dereağzı, Marmara, Sahil, Yenimahalle
+- [Büyükçekmece Tel Çit](https://bahartelcit.com/buyukcekmece-tel-cit/): Celaliye, Kumburgaz, Mimarsinan, Tepecik, Kamiloba, Çakmaklı, Ekinoba, Güzelce, Karaağaç, Türkoba, Sinanoba, Murat Çeşme, Batıköy, Dizdariye, Pınartepe, Mimaroba
+- [Tekirdağ Tel Çit](https://bahartelcit.com/tekirdag-tel-cit/): Marmaraereğlisi, Sultanköy, Yeniçiftlik, Çeşmeli, Çorlu, Çerkezköy, Kapaklı, Ergene, Velimeşe, Süleymanpaşa, Kumbağ, Saray, Muratlı
+
+## Sayfalar
+- [Ana sayfa](https://bahartelcit.com/)
+- [Tüm bölgeler](https://bahartelcit.com/bolgeler/)
+- [İletişim ve fiyat teklifi](https://bahartelcit.com/iletisim/)
+
+## Optional
+- [Tüm içerik (llms-full.txt)](https://bahartelcit.com/llms-full.txt)
+- [Site haritası](https://bahartelcit.com/sitemap.xml)

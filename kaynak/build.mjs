@@ -10,6 +10,7 @@ const OUT = path.resolve(ROOT, '..', 'site');
 const cfg = JSON.parse(fs.readFileSync(path.join(ROOT, 'config.json'), 'utf8'));
 const SITE = cfg.siteUrl.replace(/\/$/, '');
 const TODAY = new Date().toISOString().slice(0, 10);
+fs.rmSync(OUT, { recursive: true, force: true });
 const YEAR = new Date().getFullYear();
 
 // ---------- yardımcılar ----------
@@ -97,8 +98,8 @@ function businessSchema() {
     name: cfg.brand,
     description: `${cfg.brand}: Silivri, Çatalca, Beylikdüzü, Büyükçekmece ve Tekirdağ’da tel çit, panel çit, çim çit, arsa çevirme, solar aydınlatma ve peyzaj.`,
     url: SITE + '/',
-    logo: SITE + '/assets/logo.png',
-    image: [SITE + '/assets/og.png', ...photos.map((p) => `${SITE}/assets/foto/${p.file}-960.webp`)],
+    logo: SITE + '/assets/marka/logo.png',
+    image: [SITE + '/assets/og.jpg', ...photos.map((p) => `${SITE}/assets/foto/${p.file}-960.webp`)],
     telephone: cfg.phone,
     priceRange: '₺₺',
     openingHours: cfg.openingHours,
@@ -122,6 +123,15 @@ function businessSchema() {
   if (cfg.googleMapsUrl) { b.hasMap = cfg.googleMapsUrl; b.sameAs = [cfg.googleMapsUrl]; }
   return b;
 }
+const websiteSchema = () => ({
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${SITE}/#site`,
+  name: cfg.brand,
+  url: SITE + '/',
+  inLanguage: 'tr-TR',
+  publisher: { '@id': businessId }
+});
 const serviceSchema = (name, url, area, desc) => ({
   '@context': 'https://schema.org',
   '@type': 'Service',
@@ -154,7 +164,7 @@ function trackingHead() {
 function header() {
   return `<header class="top">
   <div class="wrap top-in">
-    <a class="logo" href="/" aria-label="${esc(cfg.brand)} ana sayfa">${icon('fence', 'ic logo-ic')}<span>Bahar <b>Tel Çit</b></span></a>
+    <a class="logo" href="/" aria-label="${esc(cfg.brand)} ana sayfa"><img src="/assets/marka/logo.svg" width="116" height="50" alt="${esc(cfg.brand)} logo"></a>
     <nav class="nav" aria-label="Ana menü">
       <a href="/tel-cit/">Tel Çit</a><a href="/panel-cit/">Panel Çit</a><a href="/cim-cit/">Çim Çit</a><a href="/solar-aydinlatma/">Solar</a><a href="/peyzaj/">Peyzaj</a><a href="/bolgeler/">Bölgeler</a><a href="/iletisim/">İletişim</a>
     </nav>
@@ -167,7 +177,7 @@ function footer() {
   return `<footer class="foot">
   <div class="wrap foot-grid">
     <div>
-      <p class="logo">${icon('fence', 'ic logo-ic')}<span>Bahar <b>Tel Çit</b></span></p>
+      <p class="logo"><img src="/assets/marka/logo-acik.svg" width="130" height="56" alt="${esc(cfg.brand)}" loading="lazy"></p>
       <p>${esc(cfg.slogan)}. Silivri merkezli ekibimizle İstanbul’un batısı ve Tekirdağ’da hizmet veriyoruz.</p>
       <p><a href="${telLink}" data-ev="call">${icon('phone')} ${esc(cfg.phoneDisplay)}</a><br><a href="${waLink('Merhaba, fiyat teklifi almak istiyorum.')}" data-ev="whatsapp" target="_blank" rel="noopener">${icon('wa')} WhatsApp’tan yazın</a><br>${esc(cfg.openingHoursText)}</p>
     </div>
@@ -288,14 +298,28 @@ ${cfg.searchConsoleVerification ? `<meta name="google-site-verification" content
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${canonical}">
-<meta property="og:image" content="${SITE}/assets/og.png">
+<meta property="og:image" content="${SITE}/assets/og.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="${esc(cfg.brand)}: tel çit, panel çit, çim çit ve arsa çevirme">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="${esc(title)}">
+<meta name="twitter:description" content="${esc(desc)}">
+<meta name="twitter:image" content="${SITE}/assets/og.jpg">
+<meta name="author" content="${esc(cfg.brand)}">
+<meta name="geo.placename" content="${esc(cfg.address.locality)}, ${esc(cfg.address.region)}">
+<meta name="format-detection" content="telephone=yes">
 <meta name="theme-color" content="#1f6b3a">
+<link rel="alternate" hreflang="tr" href="${canonical}">
+<link rel="alternate" hreflang="x-default" href="${canonical}">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/assets/logo.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="stylesheet" href="/assets/style.css">
 ${trackingHead()}
-${[businessSchema(), ...schema, ...(crumbs ? [crumbSchema(crumbs)] : [])]
+${[businessSchema(), ...(url === '/' ? [websiteSchema()] : []), ...schema, ...(crumbs ? [crumbSchema(crumbs)] : [])]
   .map((s) => `<script type="application/ld+json">${JSON.stringify(s)}</script>`)
   .join('\n')}
 <script>window.BTC=${JSON.stringify({ wa: cfg.whatsapp, ads: cfg.googleAdsId, labels: cfg.googleAdsLabels, page: ctx.place || '' })}</script>
@@ -527,23 +551,106 @@ page({
   body: `<section class="wrap page-head"><h1>Sayfa bulunamadı</h1><p class="lead">Aradığınız sayfa taşınmış olabilir. Ana sayfaya dönebilir veya doğrudan WhatsApp’tan yazabilirsiniz.</p>${cta('', '')}<p><a href="/">Ana sayfa</a> · <a href="/bolgeler/">Bölgeler</a></p></section>`
 });
 
-// ---------- sitemap, robots, statik dosyalar ----------
+// ---------- sitemap, robots, llms.txt, statik dosyalar ----------
+const imgTags = photos
+  .map((p) => `<image:image><image:loc>${SITE}/assets/foto/${p.file}-960.webp</image:loc></image:image>`)
+  .join('');
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${pages
   .filter((p) => !p.noindex)
-  .map((p) => `  <url><loc>${SITE}${p.url}</loc><lastmod>${TODAY}</lastmod><priority>${p.priority.toFixed(1)}</priority></url>`)
+  .map((p) => `  <url><loc>${SITE}${p.url}</loc><lastmod>${TODAY}</lastmod><priority>${p.priority.toFixed(1)}</priority>${p.url === '/' || services.some((s) => svcUrl(s) === p.url) ? imgTags : ''}</url>`)
   .join('\n')}
 </urlset>
 `;
 fs.writeFileSync(path.join(OUT, 'sitemap.xml'), sitemap);
-fs.writeFileSync(path.join(OUT, 'robots.txt'), `User-agent: *\nAllow: /\n\nSitemap: ${SITE}/sitemap.xml\n`);
+
+// Arama motorları ve yapay zekâ botları için açık izin
+const bots = ['Googlebot', 'Bingbot', 'YandexBot', 'GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot', 'Applebot-Extended', 'CCBot', 'Meta-ExternalAgent', 'Bytespider', 'Amazonbot', 'DuckAssistBot', 'MistralAI-User'];
+fs.writeFileSync(
+  path.join(OUT, 'robots.txt'),
+  `# ${cfg.brand} - ${SITE}\n# Yapay zekâ özeti: ${SITE}/llms.txt\n\nUser-agent: *\nAllow: /\nDisallow: /404.html\n\n${bots.map((b) => `User-agent: ${b}\nAllow: /`).join('\n\n')}\n\nSitemap: ${SITE}/sitemap.xml\n`
+);
+
+// llms.txt (https://llmstxt.org) ve tüm içerik için llms-full.txt
+const contact = `- WhatsApp: https://wa.me/${cfg.whatsapp}\n- Telefon: ${cfg.phoneDisplay} (${cfg.phone})\n- Çalışma saatleri: ${cfg.openingHoursText}\n- Merkez: ${cfg.address.locality}, ${cfg.address.region}`;
+const llms = `# ${cfg.brand}
+
+> ${cfg.description} Ücretsiz keşif yapılır, fiyat WhatsApp üzerinden aynı gün verilir. Malzeme ve işçilik dahil anahtar teslim çalışılır.
+
+## İletişim
+${contact}
+
+## Hizmetler
+${services.map((s) => `- [${s.name}](${SITE}${svcUrl(s)}): ${s.short}`).join('\n')}
+
+## Hizmet bölgeleri
+${districts.map((d) => `- [${d.name} Tel Çit](${SITE}${d.hub}): ${d.villages.join(', ')}`).join('\n')}
+
+## Sayfalar
+- [Ana sayfa](${SITE}/)
+- [Tüm bölgeler](${SITE}/bolgeler/)
+- [İletişim ve fiyat teklifi](${SITE}/iletisim/)
+
+## Optional
+- [Tüm içerik (llms-full.txt)](${SITE}/llms-full.txt)
+- [Site haritası](${SITE}/sitemap.xml)
+`;
+fs.writeFileSync(path.join(OUT, 'llms.txt'), llms);
+const full = `# ${cfg.brand}: tüm içerik
+
+> ${cfg.description}
+
+## İletişim
+${contact}
+
+${services
+  .map(
+    (s) => `## ${s.name}
+Sayfa: ${SITE}${svcUrl(s)}
+
+${s.intro}
+
+Kapsam:
+${s.details.map((x) => `- ${x}`).join('\n')}
+
+Sık sorulan sorular:
+${s.faq.map(([q, a]) => `- S: ${q}\n  C: ${a}`).join('\n')}
+`
+  )
+  .join('\n')}
+## Bölgeler
+${districts
+  .map(
+    (d) => `### ${d.name} (${d.city})
+${d.note}
+Sayfa: ${SITE}${d.hub}
+İlçe sayfaları: ${services.filter((s) => s.slug !== 'tel-cit').map((s) => `${SITE}${dsUrl(d, s)}`).join(', ')}
+Köy ve mahalleler: ${d.places.map((p) => `${p.full} (${SITE}${p.url})`).join(', ')}
+`
+  )
+  .join('\n')}`;
+fs.writeFileSync(path.join(OUT, 'llms-full.txt'), full);
+
+// PWA manifest, IndexNow anahtarı, ikonlar
+fs.writeFileSync(
+  path.join(OUT, 'site.webmanifest'),
+  JSON.stringify({
+    name: cfg.brand, short_name: cfg.brand, lang: 'tr', start_url: '/', display: 'standalone',
+    background_color: '#ffffff', theme_color: '#1f6b3a',
+    icons: [
+      { src: '/assets/marka/ikon-192.png', sizes: '192x192', type: 'image/png' },
+      { src: '/assets/marka/ikon-512.png', sizes: '512x512', type: 'image/png' },
+      { src: '/assets/marka/ikon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+    ]
+  }, null, 2)
+);
+if (cfg.indexNowKey) fs.writeFileSync(path.join(OUT, `${cfg.indexNowKey}.txt`), cfg.indexNowKey);
 fs.mkdirSync(path.join(OUT, 'assets'), { recursive: true });
 fs.cpSync(path.join(ROOT, 'assets'), path.join(OUT, 'assets'), { recursive: true });
-fs.writeFileSync(
-  path.join(OUT, 'favicon.svg'),
-  `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><rect width="24" height="24" rx="5" fill="#1f6b3a"/><g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" transform="translate(2.4 2.4) scale(.8)">${ICONS.fence}</g></svg>`
-);
+fs.renameSync(path.join(OUT, 'assets', 'favicon.ico'), path.join(OUT, 'favicon.ico'));
+fs.copyFileSync(path.join(ROOT, 'assets', 'marka', 'favicon.svg'), path.join(OUT, 'favicon.svg'));
+fs.copyFileSync(path.join(ROOT, 'assets', 'marka', 'ikon-180.png'), path.join(OUT, 'apple-touch-icon.png'));
 // Netlify / Cloudflare Pages için önbellek başlıkları
 fs.writeFileSync(path.join(OUT, '_headers'), `/assets/*\n  Cache-Control: public, max-age=604800\n`);
 
