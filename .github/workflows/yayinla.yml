@@ -41,9 +41,20 @@ jobs:
         if: steps.kontrol.outputs.hazir == '1'
         env:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}
-        run: $SSH_CMD "$SSH_USER@$SSH_HOST" 'bash -s' < sunucu/kurulum.sh
+        run: |
+          set +e
+          $SSH_CMD "$SSH_USER@$SSH_HOST" 'bash -s' < sunucu/kurulum.sh > cikti.txt 2>&1; rc=$?
+          cat cikti.txt
+          tail -n 12 cikti.txt | while IFS= read -r l; do echo "::notice::$l"; done
+          exit $rc
       - name: Dosyaları yükle
         if: steps.kontrol.outputs.hazir == '1'
         env:
           SSHPASS: ${{ secrets.SSH_PASSWORD }}
-        run: rsync -rz --delete --chmod=D755,F644 -e "$SSH_CMD" site/ "$SSH_USER@$SSH_HOST:/var/www/bahartelcit.com/"
+        run: |
+          set +e
+          rsync -rz --delete --chmod=D755,F644 -e "$SSH_CMD" site/ "$SSH_USER@$SSH_HOST:/var/www/bahartelcit.com/" > cikti.txt 2>&1; rc=$?
+          cat cikti.txt
+          tail -n 12 cikti.txt | while IFS= read -r l; do echo "::notice::$l"; done
+          [ $rc -eq 0 ] && echo "::notice::Site yüklendi."
+          exit $rc
