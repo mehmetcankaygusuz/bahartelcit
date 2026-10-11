@@ -60,3 +60,10 @@ jobs:
           tail -n 12 cikti.txt | while IFS= read -r l; do echo "::notice::$l"; done
           [ $rc -eq 0 ] && echo "::notice::Site yüklendi."
           exit $rc
+      - name: Alan adı (DNS) kontrolü
+        if: steps.kontrol.outputs.hazir == '1'
+        run: |
+          IP=$(dig +short bahartelcit.com A | tail -n1)
+          if [ -z "$IP" ]; then echo "::warning::bahartelcit.com DNS kaydı yok. A kaydını sunucu IP'sine yönlendirin."
+          elif [ "$IP" = "$SSH_HOST" ]; then echo "::notice::bahartelcit.com DNS kaydı sunucuyu gösteriyor."
+          else echo "::warning::bahartelcit.com başka bir IP'yi gösteriyor ($IP). A kaydını sunucu IP'sine yönlendirin."; fi
