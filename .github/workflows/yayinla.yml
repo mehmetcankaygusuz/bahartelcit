@@ -73,5 +73,7 @@ jobs:
           H=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://bahartelcit.com/ || true)
           W=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 https://www.bahartelcit.com/ || true)
           P=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://bahartelcit.com/ || true)
-          T=$(curl -s --max-time 20 http://bahartelcit.com/ | grep -o '<title>[^<]*' | head -1 || true)
+          T=$(curl -s --max-time 20 https://bahartelcit.com/ | grep -o '<title>[^<]*' | head -1 || true)
+          S=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 20 https://solimena.com.tr/ || true)
+          echo "::notice::Aynı sunucudaki solimena.com.tr -> $S"
           echo "::notice::https://bahartelcit.com -> $H, https://www -> $W, http -> $P, başlık: ${T#<title>}"
