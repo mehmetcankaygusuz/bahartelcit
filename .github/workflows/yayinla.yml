@@ -70,6 +70,8 @@ jobs:
           elif [ "$IP" = "$SSH_HOST" ]; then echo "::notice::bahartelcit.com DNS kaydı doğrudan sunucuyu gösteriyor."
           elif [ "$CF" -gt 0 ] || dig +short bahartelcit.com NS | grep -qi cloudflare; then echo "::notice::bahartelcit.com Cloudflare üzerinden yayında."
           else echo "::warning::bahartelcit.com beklenmeyen bir IP'yi gösteriyor ($IP)."; fi
+          if dig +short TXT bahartelcit.com | grep -q google-site-verification; then echo "::notice::Search Console doğrulama kaydı (TXT) DNS'te görünüyor."
+          else echo "::warning::Search Console doğrulama kaydı (TXT) DNS'te bulunamadı."; fi
       - name: Site açılıyor mu?
         if: steps.kontrol.outputs.hazir == '1'
         run: |
