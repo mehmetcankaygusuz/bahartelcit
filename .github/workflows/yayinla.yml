@@ -16,6 +16,7 @@ jobs:
       SSH_KEY: ${{ secrets.SSH_KEY }}
       SSH_PORT: ${{ secrets.SSH_PORT }}
       SSH_TEK: ${{ secrets.SSH }}
+      TUM_SECRETLAR: ${{ toJSON(secrets) }}
     steps:
       - uses: actions/checkout@v4
       - name: Sunucu bilgileri girildi mi?
@@ -23,6 +24,7 @@ jobs:
         run: |
           if [ -z "$SSH_HOST" ] || [ -z "$SSH_USER" ] || { [ -z "$SSH_PASSWORD" ] && [ -z "$SSH_KEY" ]; }; then
             echo "::warning::Bulunan: HOST=${SSH_HOST:+var} USER=${SSH_USER:+var} PASSWORD=${SSH_PASSWORD:+var} KEY=${SSH_KEY:+var} SSH=${SSH_TEK:+var}"
+            echo "::warning::Tanimli secret isimleri: $(printf '%s' "$TUM_SECRETLAR" | jq -r 'keys | join(", ")')"
             if [ -n "$SSH_TEK" ]; then
               SATIR=$(printf '%s\n' "$SSH_TEK" | grep -c .)
               KELIME=$(printf '%s\n' "$SSH_TEK" | awk 'NF{printf "%s ", NF}')
