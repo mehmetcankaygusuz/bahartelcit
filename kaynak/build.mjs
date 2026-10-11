@@ -168,7 +168,20 @@ function header() {
     <nav class="nav" aria-label="Ana menü">
       <a href="/tel-cit/">Tel Çit</a><a href="/panel-cit/">Panel Çit</a><a href="/cim-cit/">Çim Çit</a><a href="/solar-aydinlatma/">Solar</a><a href="/peyzaj/">Peyzaj</a><a href="/bolgeler/">Bölgeler</a><a href="/iletisim/">İletişim</a>
     </nav>
-    <a class="btn btn-wa btn-sm" data-ev="whatsapp" href="${waLink('Merhaba, web sitenizden ulaşıyorum. Fiyat teklifi almak istiyorum.')}" target="_blank" rel="noopener">${icon('wa')}<span>WhatsApp</span></a>
+    <a class="btn btn-wa btn-sm" data-ev="whatsapp" href="${waLink('Merhaba, web sitenizden ulaşıyorum. Fiyat teklifi almak istiyorum.')}" target="_blank" rel="noopener" aria-label="WhatsApp’tan yazın">${icon('wa')}<span>WhatsApp</span></a>
+    <details class="mnav">
+      <summary aria-label="Menüyü aç"><span class="burger" aria-hidden="true"><i></i><i></i><i></i></span><span class="mnav-t">Menü</span></summary>
+      <nav class="mnav-panel" aria-label="Mobil menü">
+        <p class="mnav-h">Hizmetler</p>
+        <ul>${services.map((s) => `<li><a href="${svcUrl(s)}">${icon(s.icon)}<span>${esc(s.name)}</span></a></li>`).join('')}</ul>
+        <p class="mnav-h">Bölgeler</p>
+        <ul class="mnav-2">${districts.map((d) => `<li><a href="${d.hub}">${esc(d.name)}</a></li>`).join('')}<li><a href="/bolgeler/">Tüm köyler</a></li></ul>
+        <div class="mnav-cta">
+          <a class="btn btn-wa" data-ev="whatsapp" href="${waLink('Merhaba, web sitenizden ulaşıyorum. Fiyat teklifi almak istiyorum.')}" target="_blank" rel="noopener">${icon('wa')}<span>WhatsApp’tan Yaz</span></a>
+          <a class="btn btn-call" data-ev="call" href="${telLink}">${icon('phone')}<span>${esc(cfg.phoneDisplay)}</span></a>
+        </div>
+      </nav>
+    </details>
   </div>
 </header>`;
 }
@@ -209,12 +222,12 @@ function leadForm({ place = '', service = '' } = {}) {
   return `<form class="leadform" id="teklif" data-lead novalidate>
   <p class="lead-h">Ücretsiz keşif ve fiyat alın</p>
   <p class="lead-sub">Formu doldurun, butona basın. WhatsApp mesajınız hazır açılır, sadece <b>Gönder</b>’e basın.</p>
-  <label>Adınız<input name="ad" autocomplete="name" placeholder="Örn. Ahmet Yılmaz"></label>
-  <label>Arsanızın yeri (ilçe / köy)<input name="bolge" list="bolgeler" value="${esc(place)}" placeholder="Örn. Silivri Ortaköy" required></label>
+  <label>Adınız<input name="ad" autocomplete="name" enterkeyhint="next" placeholder="Örn. Ahmet Yılmaz"></label>
+  <label>Arsanızın yeri (ilçe / köy)<input name="bolge" list="bolgeler" autocomplete="address-level2" enterkeyhint="next" value="${esc(place)}" placeholder="Örn. Silivri Ortaköy" required></label>
   <div class="frow"><label>Hizmet<select name="hizmet">${services
     .map((s) => `<option${s.name === service ? ' selected' : ''}>${esc(s.name)}</option>`)
     .join('')}<option${service ? '' : ''}>Henüz karar vermedim</option></select></label>
-  <label>Uzunluk (metre)<input name="metre" inputmode="numeric" placeholder="Bilmiyorsanız boş"></label></div>
+  <label>Uzunluk (metre)<input name="metre" inputmode="numeric" placeholder="Örn. 250"></label></div>
   <label>Not <small>isteğe bağlı</small><textarea name="not" rows="2" placeholder="Örn. 2 metre yükseklik, araç kapısı olsun"></textarea></label>
   <button class="btn btn-wa btn-lg" type="submit">${icon('wa')}<span>WhatsApp’tan Teklif İste</span></button>
   <p class="lead-or">ya da hemen arayın: <a href="${telLink}" data-ev="call">${esc(cfg.phoneDisplay)}</a></p>
@@ -285,7 +298,7 @@ function page({ url, title, desc, crumbs, schema = [], body, ctx = {}, noindex =
 <html lang="tr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="${canonical}">
