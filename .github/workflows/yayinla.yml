@@ -67,7 +67,7 @@ jobs:
           CF=$(curl -sI --max-time 15 https://bahartelcit.com/ | grep -ci '^server: cloudflare' || true)
           if [ -z "$IP" ]; then echo "::warning::bahartelcit.com DNS kaydı yok."
           elif [ "$IP" = "$SSH_HOST" ]; then echo "::notice::bahartelcit.com DNS kaydı doğrudan sunucuyu gösteriyor."
-          elif [ "$CF" -gt 0 ]; then echo "::notice::bahartelcit.com Cloudflare üzerinden yayında."
+          elif [ "$CF" -gt 0 ] || dig +short bahartelcit.com NS | grep -qi cloudflare; then echo "::notice::bahartelcit.com Cloudflare üzerinden yayında."
           else echo "::warning::bahartelcit.com beklenmeyen bir IP'yi gösteriyor ($IP)."; fi
       - name: Site açılıyor mu?
         if: steps.kontrol.outputs.hazir == '1'
@@ -78,6 +78,7 @@ jobs:
           T=$(curl -s --max-time 20 https://bahartelcit.com/ | grep -o '<title>[^<]*' | head -1 || true)
           S=$(curl -s -o /dev/null -w '%{http_code}' -L --max-time 20 https://solimena.com.tr/ || true)
           echo "::notice::Aynı sunucudaki solimena.com.tr -> $S"
+          [ "$H" = "000" ] && echo "::warning::https hatası: $(curl -sS -o /dev/null --max-time 20 https://bahartelcit.com/ 2>&1 | head -c 200)"
           echo "::notice::https://bahartelcit.com -> $H, https://www -> $W, http -> $P, başlık: ${T#<title>}"
       - name: Arama motorlarına bildir (IndexNow)
         if: steps.kontrol.outputs.hazir == '1'
